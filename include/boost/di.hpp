@@ -1155,7 +1155,7 @@ class deduce {
   };
 };
 }
-static constexpr __BOOST_DI_UNUSED scopes::deduce deduce{};
+inline constexpr __BOOST_DI_UNUSED scopes::deduce deduce{};
 namespace concepts {
 template <class T>
 struct abstract_type {
@@ -1904,7 +1904,7 @@ class singleton {
   using scope = scope_impl<T>;
 };
 }
-static constexpr __BOOST_DI_UNUSED scopes::singleton singleton{};
+inline constexpr __BOOST_DI_UNUSED scopes::singleton singleton{};
 namespace scopes {
 class unique {
  public:
@@ -1927,7 +1927,7 @@ class unique {
   };
 };
 }
-static constexpr __BOOST_DI_UNUSED scopes::unique unique{};
+inline constexpr __BOOST_DI_UNUSED scopes::unique unique{};
 namespace type_traits {
 template <class T>
 struct scope_traits {
@@ -1998,7 +1998,7 @@ struct bind :
         bind
 #endif
 {};
-static constexpr __BOOST_DI_UNUSED core::override override{};
+inline constexpr __BOOST_DI_UNUSED core::override override{};
 namespace concepts {
 struct get {};
 struct is_creatable {};
@@ -3037,13 +3037,14 @@ using injector = detail::injector<
 #define __BOOST_DI_MAKE_INJECTOR(...) __VA_ARGS__
 #else
 namespace detail {
-static auto make_injector = [](auto injector) {
+template<typename T>
+auto make_injector(T injector) {
   using injector_t = decltype(injector);
   struct i : injector_t {
     explicit i(injector_t&& other) : injector_t(static_cast<injector_t&&>(other)) {}
   };
   return i{static_cast<injector_t&&>(injector)};
-};
+}
 }
 #define __BOOST_DI_MAKE_INJECTOR(...) detail::make_injector(__VA_ARGS__)
 #endif
@@ -3139,7 +3140,7 @@ struct is_injected : detail::type_op {
   template <class TArg, class U = aux::decay_t<aux::conditional_t<aux::is_same<T, _>::value, typename TArg::type, T>>>
   struct apply : aux::conditional_t<aux::is_class<U>::value, typename type_traits::is_injectable<U>::type, aux::true_type> {};
 };
-static constexpr auto include_root = true;
+inline constexpr auto include_root = true;
 namespace operators {
 template <class X, class Y>
 inline auto operator||(const X&, const Y&) {
@@ -3290,7 +3291,7 @@ struct named_impl {
   template <class T>
   T operator=(const T&) const;
 };
-static constexpr __BOOST_DI_UNUSED named_impl named{};
+inline constexpr __BOOST_DI_UNUSED named_impl named{};
 template <class T, class TName>
 struct combine_impl {
   using type = ::boost::ext::di::v1_3_0::named<TName, T>;
